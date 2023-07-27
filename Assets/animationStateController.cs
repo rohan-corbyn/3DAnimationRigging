@@ -12,6 +12,7 @@ public class animationStateController : MonoBehaviour
     public float acceleration = 2.0f;
     int velocityXHash;
     int velocityZHash;
+    int jumpingHash;
 
     public float maximumWalkVelocity = 0.5f;
     public float maximumRunVelocity = 2.0f;
@@ -24,6 +25,7 @@ public class animationStateController : MonoBehaviour
 
         velocityZHash = Animator.StringToHash("VelocityZ");
         velocityXHash = Animator.StringToHash("VelocityX");
+        jumpingHash = Animator.StringToHash("Jumping");
     }
 
 
@@ -72,7 +74,7 @@ public class animationStateController : MonoBehaviour
 
 
 
-        if (!leftPressed && !rightPressed && velocityX != 0 && (velocityX > -0.5 && velocityX < 0.05))
+        if (!leftPressed && !rightPressed && velocityX != 0 && (velocityX > -0.05 && velocityX < 0.05))
         {
             velocityX = 0.0f;
         }
@@ -142,6 +144,16 @@ public class animationStateController : MonoBehaviour
         bool leftPressed = Input.GetKey(KeyCode.A);
         bool rightPressed = Input.GetKey(KeyCode.D);
         bool sprintPressed = Input.GetKey(KeyCode.LeftShift);
+        bool spacePressed = Input.GetKeyDown(KeyCode.Space);
+
+
+        if (spacePressed)
+        {
+            animator.SetBool(jumpingHash, true);
+        }
+        else {
+            animator.SetBool(jumpingHash, false);
+        }
 
         float currentMaxVelocity = sprintPressed ? maximumRunVelocity : maximumWalkVelocity;
 
