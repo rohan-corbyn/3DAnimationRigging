@@ -8,11 +8,14 @@ public class animationStateController : MonoBehaviour
     Animator animator;
     float velocityX = 0.0f;
     float velocityZ = 0.0f;
+    float crouchPosition = 0.0f;
     public float deceleration = 2.0f;
     public float acceleration = 2.0f;
+    public float crouchingAcceleration = 2.0f;
     int velocityXHash;
     int velocityZHash;
     int jumpingHash;
+    int crouchingHash;
 
     public float maximumWalkVelocity = 0.5f;
     public float maximumRunVelocity = 2.0f;
@@ -26,6 +29,7 @@ public class animationStateController : MonoBehaviour
         velocityZHash = Animator.StringToHash("VelocityZ");
         velocityXHash = Animator.StringToHash("VelocityX");
         jumpingHash = Animator.StringToHash("Jumping");
+        crouchingHash = Animator.StringToHash("Crouching");
     }
 
 
@@ -145,6 +149,7 @@ public class animationStateController : MonoBehaviour
         bool rightPressed = Input.GetKey(KeyCode.D);
         bool sprintPressed = Input.GetKey(KeyCode.LeftShift);
         bool spacePressed = Input.GetKeyDown(KeyCode.Space);
+        bool crouchPressed = Input.GetKey(KeyCode.C);
 
 
         if (spacePressed)
@@ -155,6 +160,16 @@ public class animationStateController : MonoBehaviour
             animator.SetBool(jumpingHash, false);
         }
 
+        if (crouchPressed && crouchPosition < 1.0f) {
+            crouchPosition += Time.deltaTime * crouchingAcceleration;
+        }
+
+        if (!crouchPressed && crouchPosition > 0.0f) {
+            crouchPosition -= Time.deltaTime * crouchingAcceleration;
+        }
+
+
+
         float currentMaxVelocity = sprintPressed ? maximumRunVelocity : maximumWalkVelocity;
 
         ChangeVelocity(forwardPressed, leftPressed, rightPressed, sprintPressed, currentMaxVelocity);
@@ -163,5 +178,6 @@ public class animationStateController : MonoBehaviour
 
         animator.SetFloat(velocityXHash, velocityX);
         animator.SetFloat(velocityZHash, velocityZ);
+        animator.SetLayerWeight(1, crouchPosition);
     }
 }
